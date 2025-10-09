@@ -27,6 +27,10 @@ public class EventEntity {
 
     private double budget;
 
+    @Column(length = 255)
+    private String imageUrl;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organizer_id", nullable = false)
     private UserEntity organizer;
@@ -43,14 +47,17 @@ public class EventEntity {
     public EventEntity() {
     }
 
-    public EventEntity(Long id, String name, String description, LocalDateTime eventDate, String location, double budget, UserEntity organizer) {
+    public EventEntity(Long id, String name, String description, LocalDateTime eventDate, String location, double budget, String imageUrl, UserEntity organizer, List<TaskEntity> task, List<InvitationEntity> invitations) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.eventDate = eventDate;
         this.location = location;
         this.budget = budget;
+        this.imageUrl = imageUrl;
         this.organizer = organizer;
+        this.task = task;
+        this.invitations = invitations;
     }
 
     public Long getId() {
@@ -123,5 +130,13 @@ public class EventEntity {
 
     public void setInvitations(List<InvitationEntity> invitations) {
         this.invitations = invitations;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

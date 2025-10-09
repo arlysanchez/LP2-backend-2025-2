@@ -15,6 +15,6 @@ public interface EventRepositoryPort {
     List<Event> findByOrganizerId(Long organizerId);
     Optional<Event> findByIdWithTasks(Long id);
     Optional<Event> findByIdWithInvitations(Long id);
-
+    Optional<Event> updateImageUrl(Long eventId, String imageUrl);
 
 }

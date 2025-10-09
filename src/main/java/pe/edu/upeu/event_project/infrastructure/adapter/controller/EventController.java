@@ -3,6 +3,7 @@ package pe.edu.upeu.event_project.infrastructure.adapter.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pe.edu.upeu.event_project.domain.model.Event;
 import pe.edu.upeu.event_project.domain.model.User;
 import pe.edu.upeu.event_project.domain.port.in.EventUseCase;
@@ -10,6 +11,7 @@ import pe.edu.upeu.event_project.domain.port.in.UserUseCase;
 import pe.edu.upeu.event_project.infrastructure.adapter.controller.dto.EventDto;
 import pe.edu.upeu.event_project.infrastructure.adapter.controller.dto.UserDto;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,6 +94,19 @@ public class EventController {
         }
     }
 
+    @PostMapping("/{id}/upload-image")
+    public ResponseEntity<EventDto.EventResponse> uploadEventImage(
+            @PathVariable Long id, @RequestParam("file")MultipartFile file){
+        try {
+            return eventUseCase.uploadImage(id,file)
+                    .map(event -> ResponseEntity.ok(mapToEventResponse(event)))
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 
 
@@ -101,12 +116,18 @@ public class EventController {
         if (event == null || event.getOrganizer() == null){
            return null;
         }
+        String imageUrl = null;
+        if(event.getImageUrl()!=null && !event.getImageUrl().isEmpty()){
+            imageUrl = "http://localhost:8082/images/" +event.getImageUrl();
+        }
+
         UserDto.UserResponse organizerResponse = new UserDto.UserResponse(
                 event.getOrganizer().getId(),
                 event.getOrganizer().getFull_name(),
                 event.getOrganizer().getEmail(),
                 event.getOrganizer().getRole()
         );
+
         return new EventDto.EventResponse(
                 event.getId(),
                 event.getName(),
@@ -114,7 +135,8 @@ public class EventController {
                 event.getEventDate(),
                 event.getLocation(),
                 event.getBudget(),
-                organizerResponse
+                organizerResponse,
+                imageUrl
         );
     }
 

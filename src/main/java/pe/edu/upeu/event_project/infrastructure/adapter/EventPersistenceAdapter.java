@@ -87,4 +87,14 @@ public class EventPersistenceAdapter implements EventRepositoryPort {
 
          */
     }
+
+    @Override
+    public Optional<Event> updateImageUrl(Long eventId, String imageUrl) {
+        return eventRepository.findById(eventId)
+                .map(eventEntity ->{
+                  eventEntity.setImageUrl(imageUrl);
+                  return eventMapper.toDomainModel(eventEntity);
+        });
+
+    }
 }

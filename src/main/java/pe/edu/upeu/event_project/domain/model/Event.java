@@ -14,6 +14,7 @@ public class Event {
     private User organizer;
     private List<Task> task;
     private List<Invitation> invitations;
+    private String imageUrl;
 
     public Long getId() {
         return id;
@@ -85,5 +86,13 @@ public class Event {
 
     public void setInvitations(List<Invitation> invitations) {
         this.invitations = invitations;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

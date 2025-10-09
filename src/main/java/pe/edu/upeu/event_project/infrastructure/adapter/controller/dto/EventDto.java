@@ -11,7 +11,7 @@ public record EventDto() {
     public record EventResponse(
             Long id, String name, String description,
             LocalDateTime eventDate, String location,
-            double budget, UserDto.UserResponse organizer) {}
+            double budget, UserDto.UserResponse organizer, String imageUrl) {}
 
 
 }

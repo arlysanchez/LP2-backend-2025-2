@@ -1,11 +1,15 @@
 package pe.edu.upeu.event_project.app.usecase;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pe.edu.upeu.event_project.domain.model.Event;
 import pe.edu.upeu.event_project.domain.model.User;
 import pe.edu.upeu.event_project.domain.port.in.EventUseCase;
 import pe.edu.upeu.event_project.domain.port.on.EventRepositoryPort;
+import pe.edu.upeu.event_project.domain.port.on.FileStoragePort;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,11 +17,12 @@ import java.util.Optional;
 public class EventUseCaseImpl  implements EventUseCase {
 
     private final EventRepositoryPort eventRepositoryPort;
+    private final FileStoragePort fileStoragePort;
 
-    public EventUseCaseImpl(EventRepositoryPort eventRepositoryPort) {
+    public EventUseCaseImpl(EventRepositoryPort eventRepositoryPort, FileStoragePort fileStoragePort) {
         this.eventRepositoryPort = eventRepositoryPort;
+        this.fileStoragePort = fileStoragePort;
     }
-
 
     @Override
     public Event createEvent(Event event) {
@@ -76,5 +81,28 @@ public class EventUseCaseImpl  implements EventUseCase {
     @Override
     public List<Event> getEventsByOrganizer(Long organizerId) {
         return eventRepositoryPort.findByOrganizerId(organizerId);
+    }
+
+    @Override
+    @Transactional
+    public Optional<Event> uploadImage(Long eventId, MultipartFile file) throws IOException {
+        return eventRepositoryPort.findById(eventId).
+                map(event ->{
+                    //1. delete image ant
+                    if (event.getImageUrl()!=null && !event.getImageUrl().isEmpty()){
+                     fileStoragePort.delete(event.getImageUrl());
+                    }
+                    //2. Save the new image
+                    String filename;
+                    try {
+                        filename = fileStoragePort.save(file);
+                    }catch (IOException e){
+                        throw new RuntimeException("Fallo al guardar la imagen",e);
+                    }
+                    //3. llamar al nuevo metodo del puerto para el adaptador
+                    return eventRepositoryPort.updateImageUrl(eventId,filename)
+                            .orElse(null);
+
+                });
     }
 }
