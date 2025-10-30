@@ -60,6 +60,11 @@ public class EventUseCaseImpl  implements EventUseCase {
     }
 
     @Override
+    public Optional<Event> getAllEventsById(Long id) {
+        return eventRepositoryPort.findById(id);
+    }
+
+    @Override
     public Optional<Event> getEventWithDetails(Long id) {
         //cargar el evento y sus tareas
         Optional<Event> eventWithTaskOpt = eventRepositoryPort.findByIdWithTasks(id);

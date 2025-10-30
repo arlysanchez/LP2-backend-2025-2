@@ -12,6 +12,7 @@ public interface EventUseCase {
     Optional<Event> updateEvent(Long eventId, Event event);
     boolean deleteEvent(Long id);
     List<Event> getAllEvents();
+    Optional<Event> getAllEventsById(Long id);
 
     //metodos de ayuda para construir el json
     Optional<Event> getEventWithDetails(Long id);

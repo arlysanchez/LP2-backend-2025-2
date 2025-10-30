@@ -33,6 +33,15 @@ public class EventController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(events);
     }
+
+    @GetMapping("id/{id}")
+    public ResponseEntity<List<EventDto.EventResponse>> getAllEventsById(@PathVariable Long id) {
+        List<EventDto.EventResponse> events = eventUseCase.getAllEventsById(id)
+                .stream()
+                .map(this::mapToEventResponse) // Reutilizamos el método de mapeo
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(events);
+    }
     @PostMapping
     // @PreAuthorize("hasAuthority('ORGANIZER')")
     public ResponseEntity<EventDto.EventResponse> createEvent(@RequestBody EventDto.EventRequest eventRequest) {
